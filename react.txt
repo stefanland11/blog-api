@@ -1,0 +1,94 @@
+import React, { useState } from 'react';
+
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('/log-in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const data = await response.json();
+      const { token } = data;
+
+      // Store the token in local storage
+      localStorage.setItem('token', token);
+
+      // Redirect or update app state to indicate successful login
+      window.location.href = '/dashboard';
+    } catch (err) {
+      setError('Invalid username or password');
+    }
+  };
+
+  return (
+    <form onSubmit={handleLogin}>
+      <h2>Login</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <div>
+        <label>Username:</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Password:</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <button type="submit">Log In</button>
+    </form>
+  );
+};
+
+export default Login;
+
+// Example of a protected API request using fetch
+const getProtectedData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/protected-route', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch protected data');
+      }
+  
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching protected data', error);
+    }
+  };
+
+  To log out, remove the token from localStorage and redirect the user.
+
+  javascript
+  Copy code
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
+  
