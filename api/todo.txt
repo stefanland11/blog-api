@@ -1,0 +1,1 @@
+return author name instead of author id, when retrieving blog posts and comments.

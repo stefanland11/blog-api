@@ -6,8 +6,14 @@ const { PrismaClient } = require("@prisma/client");
 const passport = require("./config/passport");
 const apiRouter = require("./routes/apiRouter");
 const userRouter = require("./routes/userRouter");
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(

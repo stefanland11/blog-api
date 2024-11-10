@@ -47,7 +47,8 @@ model Post {
   content    String  
   comments   Comment[]
   author     User      @relation(fields: [authorId], references: [id])
-  authorId   Int       
+  authorId   Int
+  published  Boolean   @default(false)      
   createdAt  DateTime  @default(now())
   editedAt   DateTime?
 }

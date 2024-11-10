@@ -6,6 +6,7 @@ const jwtAuth = require("../config/jwtAuth");
 //post crud
 apiRouter.post("/api/blog-post", jwtAuth, apiController.postBlogPost);
 apiRouter.get("/api/blog-post/:postId", jwtAuth, apiController.getPost);
+apiRouter.get("/api/getAllPosts", jwtAuth, apiController.getAllPosts);
 apiRouter.put("/api/blog-post/:postId", jwtAuth, apiController.updateBlogPost);
 apiRouter.delete("/api/blog-post/:postId", jwtAuth, apiController.deletePost);
 //comment crud

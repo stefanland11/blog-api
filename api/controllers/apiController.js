@@ -18,7 +18,17 @@ const getPost = async (req, res) => {
   try {
     const post = await db.getPostQuery(parseInt(postId));
     console.log(post);
-    res.json({post});
+    res.json({ post });
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    res.status(500).json({ message: "Error fetching post data" });
+  }
+};
+
+const getAllPosts = async (req, res) => {
+  try {
+    const posts = await db.getAllPostsQuery();
+    res.json({ posts });
   } catch (error) {
     console.error("Error fetching post:", error);
     res.status(500).json({ message: "Error fetching post data" });
@@ -30,7 +40,12 @@ const updateBlogPost = async (req, res) => {
   const { title, content } = req.body;
   const userId = req.user.id;
   try {
-    await db.updatePostQuery(parseInt(userId), parseInt(postId), content, title);
+    await db.updatePostQuery(
+      parseInt(userId),
+      parseInt(postId),
+      content,
+      title
+    );
     res.json({ message: "Update successful" });
   } catch (error) {
     console.error("Error fetching post:", error);
@@ -56,7 +71,11 @@ const postComment = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user.id;
 
-    const post = await db.createCommentQuery(parseInt(userId), parseInt(postId), content);
+    const post = await db.createCommentQuery(
+      parseInt(userId),
+      parseInt(postId),
+      content
+    );
     res.status(201).json(post);
   } catch (error) {
     res.status(500).json({ message: "Error creating comment" });
@@ -67,6 +86,7 @@ const updateComment = async (req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
   const userId = req.user.id;
+  console.log(req.body);
   try {
     await db.updateCommentQuery(parseInt(userId), parseInt(commentId), content);
     res.json({ message: "Update successful" });
@@ -89,11 +109,12 @@ const deleteComment = async (req, res) => {
 };
 
 module.exports = {
-    postBlogPost,
-    getPost,
-    updateBlogPost,
-    deletePost,
-    postComment,
-    updateComment,
-    deleteComment
-}
+  postBlogPost,
+  getPost,
+  getAllPosts,
+  updateBlogPost,
+  deletePost,
+  postComment,
+  updateComment,
+  deleteComment,
+};

@@ -8,7 +8,7 @@ async function createUserQuery(username, email, password) {
         username: username,
         email: email,
         password: password,
-        role: "user"
+        role: "user",
       },
     });
 
@@ -75,6 +75,35 @@ async function getPostQuery(postId) {
   }
 }
 
+async function getAllPostsQuery(postId) {
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        author: {
+          select: {
+            username: true
+          },
+        },
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return posts;
+  } catch (error) {
+    console.error("Error getting posts:", error);
+    throw error;
+  }
+}
+
 async function updatePostQuery(userId, postId, content, title) {
   try {
     const post = await prisma.post.findUnique({
@@ -96,9 +125,9 @@ async function updatePostQuery(userId, postId, content, title) {
     await prisma.post.update({
       where: {
         id: postId,
-        authorId: userId
+        authorId: userId,
       },
-      data: data
+      data: data,
     });
   } catch (error) {
     console.error("Error updating post:", error);
@@ -111,7 +140,7 @@ async function updateCommentQuery(userId, commentId, content) {
     const comment = await prisma.comment.findUnique({
       where: {
         id: commentId,
-        authorId: userId
+        authorId: userId,
       },
     });
 
@@ -121,11 +150,11 @@ async function updateCommentQuery(userId, commentId, content) {
     await prisma.comment.update({
       where: {
         id: commentId,
-        authorId: userId
+        authorId: userId,
       },
       data: {
         content: content,
-        editedAt: new Date()
+        editedAt: new Date(),
       },
     });
   } catch (error) {
@@ -148,7 +177,7 @@ async function deletePostQuery(userId, postId) {
     }
     await prisma.post.delete({
       where: {
-        id: postId
+        id: postId,
       },
     });
   } catch (error) {
@@ -162,7 +191,7 @@ async function deleteCommentQuery(userId, commentId) {
     const post = await prisma.comment.findUnique({
       where: {
         id: commentId,
-        authorId: userId
+        authorId: userId,
       },
     });
 
@@ -171,7 +200,7 @@ async function deleteCommentQuery(userId, commentId) {
     }
     await prisma.comment.delete({
       where: {
-        id: commentId
+        id: commentId,
       },
     });
   } catch (error) {
@@ -180,12 +209,12 @@ async function deleteCommentQuery(userId, commentId) {
   }
 }
 
-
 module.exports = {
   createUserQuery,
   createCommentQuery,
   createPostQuery,
   getPostQuery,
+  getAllPostsQuery,
   updateCommentQuery,
   updatePostQuery,
   deleteCommentQuery,
